@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ object.title }} - VisionBlog{% endblock %}
+
+{% block content %}
+<article class="post-detail glass">
+    <h1 class="post-title">{{ object.title }}</h1>
+    <div class="post-meta">
+        <span><i class="far fa-calendar-alt"></i> {{ object.created_at|date:"F j, Y" }}</span>
+        {% if object.category %}
+        <span class="category-badge"><i class="fas fa-tag"></i> {{ object.category }}</span>
+        {% endif %}
+        <span><i class="far fa-user"></i> {{ user.username }}</span>
+    </div>
+    <div class="post-content">
+        {{ object.content|linebreaks }}
+    </div>
+</article>
+
+<div class="post-actions mb-4">
+    <a href="{% url 'post_edit' object.pk %}" class="btn btn-primary">
+        <i class="fas fa-edit"></i> Edit
+    </a>
+    <a href="{% url 'post_delete' object.pk %}" class="btn btn-danger">
+        <i class="fas fa-trash-alt"></i> Delete
+    </a>
+    <a href="{% url 'post_list' %}" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Back to all posts
+    </a>
+</div>
+{% endblock %}

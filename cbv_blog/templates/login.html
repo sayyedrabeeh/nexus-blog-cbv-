@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - VisionBlog{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card glass">
+        <h2 class="card-title text-center text-gradient">
+            <i class="fas fa-sign-in-alt"></i> Welcome Back
+        </h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">
+                    {% if field.name == 'username' %}
+                        <i class="fas fa-user"></i>
+                    {% elif field.name == 'password' %}
+                        <i class="fas fa-lock"></i>
+                    {% endif %}
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-feedback">
+                    <i class="fas fa-exclamation-circle"></i> {{ field.errors }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div class="form-actions text-center">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </div>
+        </form>
+        
+        <p class="text-center mt-3">
+            Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

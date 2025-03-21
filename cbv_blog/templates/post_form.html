@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Edit{% else %}Create{% endif %} Post - VisionBlog{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1 class="post-title text-gradient mb-3">
+        {% if object %}
+            <i class="fas fa-edit"></i> Edit Post
+        {% else %}
+            <i class="fas fa-plus-circle"></i> Create New Post
+        {% endif %}
+    </h1>
+    
+    <form method="post" class="glass">
+        {% csrf_token %}
+        
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="error-feedback">
+                <i class="fas fa-exclamation-circle"></i> {{ field.errors }}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save
+            </button>
+            <a href="{% url 'post_list' %}" class="btn btn-outline">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,386 @@
+{% extends 'base.html' %}
+
+{% block title %}Featured Articles - VisionBlog{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3a0ca3;
+    --accent: #7209b7;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --success: #4cc9f0;
+    --warning: #f72585;
+    --gradient-1: linear-gradient(135deg, #4361ee, #3a0ca3);
+    --gradient-2: linear-gradient(135deg, #7209b7, #f72585);
+    --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    --radius: 12px;
+  }
+
+  .blog-header {
+    background: var(--gradient-1);
+    padding: 3rem 1.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    color: white;
+    text-align: center;
+  }
+
+  .blog-header h1 {
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .blog-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .view-options {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .view-btn {
+    background: var(--light);
+    border: 2px solid transparent;
+    color: var(--dark);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .view-btn.active {
+    background: var(--primary);
+    color: white;
+  }
+
+  .filter-dropdown {
+    position: relative;
+  }
+
+  .filter-dropdown select {
+    background: var(--light);
+    border: 2px solid transparent;
+    color: var(--dark);
+    padding: 0.5rem 2.5rem 0.5rem 1rem;
+    border-radius: var(--radius);
+    appearance: none;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .filter-dropdown::after {
+    content: "\f078";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .post-card {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+
+  .post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-highlight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-2);
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--dark);
+  }
+
+  .card-title a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s ease;
+  }
+
+  .card-title a:hover {
+    color: var(--primary);
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+
+  .category-badge {
+    background: var(--light);
+    color: var(--accent);
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px;
+    font-weight: 500;
+    font-size: 0.8rem;
+  }
+
+  .card-excerpt {
+    color: #495057;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.3s ease;
+  }
+
+  .read-more:hover {
+    background: var(--secondary);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .empty-icon {
+    font-size: 3rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .create-post-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--gradient-2);
+    color: white;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    transition: transform 0.3s ease;
+  }
+
+  .create-post-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .page-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    color: var(--dark);
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+  }
+
+  .page-link.active {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+  }
+
+  .page-link:hover:not(.active) {
+    background: var(--light);
+  }
+
+  @media (max-width: 768px) {
+    .filter-bar {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+  }
+</style>
+
+<div class="blog-header">
+  <h1>Discover Inspiring Content</h1>
+  <p>Explore our collection of thought-provoking articles and insights</p>
+</div>
+
+<div class="filter-bar">
+  <div class="view-options">
+    <button class="view-btn active" data-view="grid">
+      <i class="fas fa-th-large"></i> Grid
+    </button>
+    <button class="view-btn" data-view="list">
+      <i class="fas fa-list"></i> List
+    </button>
+  </div>
+  
+  {% if categories %}
+  <div class="filter-dropdown">
+    <select id="categoryFilter">
+      <option value="">All Categories</option>
+      {% for category in categories %}
+      <option value="{{ category.name }}">{{ category.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+</div>
+
+<div class="posts-container posts-grid" id="postsContainer">
+  {% for post in posts %}
+  <article class="post-card" data-category="{{ post.category|default:'' }}">
+    <div class="card-highlight"></div>
+    <div class="card-content">
+      <h2 class="card-title">
+        <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+      </h2>
+      <div class="card-meta">
+        <span><i class="far fa-calendar-alt"></i> {{ post.created_at|date:"F j, Y" }}</span>
+        {% if post.category %}
+        <span class="category-badge">{{ post.category }}</span>
+        {% endif %}
+      </div>
+      <div class="card-excerpt">
+        {{ post.content|truncatewords:25 }}
+      </div>
+      <a href="{% url 'post_detail' post.pk %}" class="read-more">
+        Read Article <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </article>
+  {% empty %}
+  <div class="empty-state">
+    <div class="empty-icon">
+      <i class="far fa-newspaper"></i>
+    </div>
+    <h3>No articles available yet</h3>
+    <p>Be the first to share your thoughts with the world</p>
+    <a href="{% url 'post_new' %}" class="create-post-btn">
+      <i class="fas fa-plus-circle"></i> Create New Article
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+{% if is_paginated %}
+<div class="pagination">
+  {% if page_obj.has_previous %}
+  <a href="?page={{ page_obj.previous_page_number }}" class="page-link">
+    <i class="fas fa-chevron-left"></i> Previous
+  </a>
+  {% endif %}
+
+  <span class="page-link active">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+  {% if page_obj.has_next %}
+  <a href="?page={{ page_obj.next_page_number }}" class="page-link">
+    Next <i class="fas fa-chevron-right"></i>
+  </a>
+  {% endif %}
+</div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // View toggle functionality
+  const viewButtons = document.querySelectorAll('.view-btn');
+  const postsContainer = document.getElementById('postsContainer');
+  
+  viewButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      viewButtons.forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      
+      const viewMode = this.getAttribute('data-view');
+      postsContainer.className = 'posts-container posts-' + viewMode;
+    });
+  });
+  
+  // Category filter functionality
+  const categoryFilter = document.getElementById('categoryFilter');
+  if (categoryFilter) {
+    categoryFilter.addEventListener('change', function() {
+      const selectedCategory = this.value;
+      const allPosts = document.querySelectorAll('.post-card');
+      
+      allPosts.forEach(post => {
+        const postCategory = post.getAttribute('data-category');
+        if (!selectedCategory || postCategory === selectedCategory) {
+          post.style.display = '';
+        } else {
+          post.style.display = 'none';
+        }
+      });
+    });
+  }
+});
+</script>
+{% endblock %}
