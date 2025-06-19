@@ -31,13 +31,22 @@ class postCreateView(LoginRequiredMixin,CreateView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()  
         return context
-        
+    def form_valid(self, form):
+       form.instance.user = self.request.user
+       return super().form_valid(form)
 class postUpdateView(LoginRequiredMixin,UpdateView):
     login_url = 'login'
     model=Post
     fields=['title','content','category']
     template_name='post_form.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 class postDeleteView(LoginRequiredMixin,DeleteView):
     login_url = 'login'
     model=Post

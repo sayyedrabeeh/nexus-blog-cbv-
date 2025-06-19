@@ -18,12 +18,16 @@
 </article>
 
 <div class="post-actions mb-4">
+{% if object.user == request.user %}
+<div class="post-actions mb-4">
     <a href="{% url 'post_edit' object.pk %}" class="btn btn-primary">
         <i class="fas fa-edit"></i> Edit
     </a>
     <a href="{% url 'post_delete' object.pk %}" class="btn btn-danger">
         <i class="fas fa-trash-alt"></i> Delete
     </a>
+</div>
+{% endif %}
     <a href="{% url 'post_list' %}" class="btn btn-outline">
         <i class="fas fa-arrow-left"></i> Back to all posts
     </a>
