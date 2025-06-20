@@ -283,15 +283,20 @@
   </div>
   
   {% if categories %}
-  <div class="filter-dropdown">
-    <select id="categoryFilter">
+<div class="filter-dropdown">
+  <form method="get" id="filterForm">
+    <select name="category" id="categoryFilter" onchange="document.getElementById('filterForm').submit();">
       <option value="">All Categories</option>
       {% for category in categories %}
-      <option value="{{ category.name }}">{{ category.name }}</option>
+        <option value="{{ category.name }}" {% if selected_category == category.name %}selected{% endif %}>
+          {{ category.name }}
+        </option>
       {% endfor %}
     </select>
-  </div>
-  {% endif %}
+  </form>
+</div>
+{% endif %}
+
 </div>
 
 <div class="posts-container posts-grid" id="postsContainer">
