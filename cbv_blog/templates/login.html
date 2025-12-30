@@ -11,8 +11,7 @@
         
         <form method="post">
             {% csrf_token %}
-            
-            {% for field in form %}
+                        {% for field in form %}
             <div class="form-group">
                 <label for="{{ field.id_for_label }}">
                     {% if field.name == 'username' %}

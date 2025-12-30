@@ -6,8 +6,13 @@ from.models import Post,Category
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import FormView
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
+
+
+@method_decorator(never_cache, name='dispatch')
 class postListView(LoginRequiredMixin,ListView):
     login_url = 'login'
     model =Post
@@ -69,6 +74,10 @@ class SignUpView(FormView):
     template_name = 'signup.html'
     form_class = UserCreationForm
     success_url = reverse_lazy('post_list')   
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('post_list')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         user = form.save()

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$htedxvg=czq$&-+!g)=ooja36wg#uq62dwo#bxho+^&xpt6wf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -128,3 +128,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Add these lines to your settings.py
+LOGIN_REDIRECT_URL = 'post_list'  # After login, go to home
+LOGOUT_REDIRECT_URL = 'login'     # After logout, go to login
+LOGIN_URL = 'login'                # Where to redirect if not authenticated
